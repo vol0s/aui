@@ -253,6 +253,7 @@ format_partitions() {
   }
 
   create_swap() {
+    print_info "[!] Select swap partition: "
     select partition in "${partitions_list[@]}"; do
       #get the selected number - 1
       partition_number=$((REPLY - 1))
@@ -519,26 +520,25 @@ configure_bootloader() {
 # ROOT PASSWORD
 
 root_password() {
-  print_title "ROOT PASSWORD"
+  print_title "[!] ROOT PASSWORD"
   arch_chroot "passwd"
 }
 
 # FINISH
 
 finish() {
-  print_title "INSTALL COMPLETED"
+  print_title "[!] INSTALL COMPLETED"
   print_warning "\nA copy of the AUI will be placed in /root directory of your new system"
   cp -R "$(pwd)" "${MOUNTPOINT}"/root
   umount_partitions
-  exit 0
+  poweroff
 }
 
 check_boot_system
 check_connection
 check_trim
 pacman -Sy
-loadkeys "$KEYMAP"
-package_install "$EDITOR reflector"
+package_install "$EDITOR"
 config_mirrorlist
 umount_partitions
 create_partition_scheme
