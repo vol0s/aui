@@ -109,7 +109,7 @@ create_partition_scheme() {
 
 create_partition() {
   select_device
-  cfdisk "${device}"     
+  cfdisk "${device}"
 }
 
 # SETUP LUKS
@@ -157,16 +157,16 @@ setup_lvm() {
       fi
     done
   fi
-  printf "%s" "Enter number of partitions [ex: 2]: " 
+  printf "%s" "Enter number of partitions [ex: 2]: "
   read -r number_partitions
   i=1
   while [[ $i -le $number_partitions ]]; do
-    printf "%s" "Enter $iª partition name [ex: home]: " 
+    printf "%s" "Enter $iª partition name [ex: home]: "
     read -r partition_name
     if [[ $i -eq $number_partitions ]]; then
       lvcreate -l 100%FREE lvm -n "${partition_name}"
     else
-      printf "%s" "Enter $iª partition size [ex: 25G, 200M]: " 
+      printf "%s" "Enter $iª partition size [ex: 25G, 200M]: "
       read -r partition_size
       lvcreate -L "${partition_size}" lvm -n "${partition_name}"
     fi
@@ -315,7 +315,7 @@ format_partitions() {
             fi
             ;;
           another)
-            printf "%s" "Mountpoint [ex: /home]:" 
+            printf "%s" "Mountpoint [ex: /home]:"
             read -r directory
             [[ $directory == "/boot" ]] && BOOT_MOUNTPOINT=$(echo "${partition}" | sed 's/[0-9]//')
             select_filesystem
@@ -424,7 +424,7 @@ configure_fstab() {
   else
     cp "${MOUNTPOINT}"/etc/fstab.aui "${MOUNTPOINT}"/etc/fstab
   fi
-  genfstab -U -p "${MOUNTPOINT}" >>"${MOUNTPOINT}"/etc/fstab 
+  genfstab -U -p "${MOUNTPOINT}" >>"${MOUNTPOINT}"/etc/fstab
   [[ -f ${MOUNTPOINT}/swapfile ]] && sed -i "s/\\${MOUNTPOINT}//" "${MOUNTPOINT}"/etc/fstab
 }
 
@@ -524,6 +524,15 @@ root_password() {
   arch_chroot "passwd"
 }
 
+# NEW USER
+
+new_user() {
+  print_title "[!] NEW USER $USER"
+  arch_chroot "useradd -m -g users -G wheel -s /bin/zsh \"${USER}\""
+  arch_chroot "passwd \"${USER}\""
+  arch_chroot "sed -i '82 s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers"
+}
+
 # FINISH
 
 finish() {
@@ -537,7 +546,7 @@ finish() {
 check_boot_system
 check_connection
 check_trim
-pacman -Sy
+pacman -Syu
 package_install "$EDITOR"
 config_mirrorlist
 umount_partitions
@@ -554,4 +563,5 @@ configure_mkinitcpio
 install_bootloader
 configure_bootloader
 root_password
+new_user
 finish
