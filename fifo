@@ -396,7 +396,7 @@ install_base_system() {
   else
     WIRED_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
     if [[ -n $WIRED_DEV ]]; then
-      arch_chroot "systemctl enable dhcpcd@${WIRED_DEV}.service"
+      #arch_chroot "systemctl enable dhcpcd@${WIRED_DEV}.service"
     fi
   fi
   if is_package_installed "espeakup"; then
@@ -544,9 +544,8 @@ finish() {
 }
 
 check_boot_system
-check_connection
+#check_connection
 check_trim
-pacman -Syu
 package_install "$EDITOR"
 config_mirrorlist
 umount_partitions
