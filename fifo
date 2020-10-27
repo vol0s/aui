@@ -395,9 +395,9 @@ install_base_system() {
     pacstrap "${MOUNTPOINT}" iw wireless_tools wpa_supplicant dialog
   else
     WIRED_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
-    if [[ -n $WIRED_DEV ]]; then
+    #if [[ -n $WIRED_DEV ]]; then
       #arch_chroot "systemctl enable dhcpcd@${WIRED_DEV}.service"
-    fi
+    #fi
   fi
   if is_package_installed "espeakup"; then
     pacstrap "${MOUNTPOINT}" alsa-utils espeakup brltty
@@ -527,9 +527,9 @@ root_password() {
 # NEW USER
 
 new_user() {
-  print_title "[!] NEW USER $USER"
-  arch_chroot "useradd -m -g users -G wheel -s /bin/zsh \"${USER}\""
-  arch_chroot "passwd \"${USER}\""
+  print_title "[!] NEW USER $USERNAME"
+  arch_chroot "useradd -m -g users -G wheel -s /bin/zsh \"${USERNAME}\""
+  arch_chroot "passwd \"${USERNAME}\""
   arch_chroot "sed -i '82 s/# %wheel ALL=(ALL) ALL/%wheel ALL=(ALL) ALL/g' /etc/sudoers"
 }
 
@@ -544,7 +544,7 @@ finish() {
 }
 
 check_boot_system
-#check_connection
+check_connection
 check_trim
 package_install "$EDITOR"
 config_mirrorlist
