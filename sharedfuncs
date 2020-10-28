@@ -34,12 +34,12 @@ MIRROR_COUNTRY="Spain"
 TIMEZONE_PATH="Europe/Madrid"
 LOCALE_GEN="es_ES.UTF-8"
 NTP_STRING="0.es.pool.ntp.org 1.es.pool.ntp.org"
-HOSTNAME="archie"
+HOSTNAME="m4ch1n4e"
 EDITOR="nano"
 
 ## LILO
 
-USERNAME="user"
+USERNAME="vol0s"
 
 # EDITOR
 

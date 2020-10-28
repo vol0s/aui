@@ -382,11 +382,11 @@ select_linux_version() {
 install_base_system() {
   print_title "[!] INSTALLING BASE SYSTEM"
   print_info "Installing PGP keyring"
-  pacman -Sy archlinux-keyring
+  pacman -Sy --noconfirm archlinux-keyring
   print_info "Using the pacstrap script we install the base system. The base-devel package group will be installed also."
   rm "${MOUNTPOINT}""${EFI_MOUNTPOINT}"/vmlinuz-linux
   select_linux_version
-  pacstrap "${MOUNTPOINT}" base-devel parted btrfs-progs f2fs-tools net-tools
+  pacstrap "${MOUNTPOINT}" base-devel parted btrfs-progs f2fs-tools net-tools git zsh --noconfirm
   [[ $? -ne 0 ]] && error_msg "Installing base system to ${MOUNTPOINT} failed. Check error messages above."
   local PTABLE=$(parted -sl | grep "gpt")
   [[ -n $PTABLE ]] && pacstrap "${MOUNTPOINT}" gptfdisk
@@ -538,6 +538,8 @@ new_user() {
 finish() {
   print_title "[!] INSTALL COMPLETED"
   print_warning "\nA copy of the AUI will be placed in /root directory of your new system"
+  print_warning "\nA copy of the dotfiles will be placed in /root directory of your new system"
+  git clone https://github.com/$USERNAME/dotfiles
   cp -R "$(pwd)" "${MOUNTPOINT}"/root
   umount_partitions
   poweroff
