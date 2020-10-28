@@ -537,10 +537,10 @@ new_user() {
 
 finish() {
   print_title "[!] INSTALL COMPLETED"
-  print_warning "\nA copy of the AUI will be placed in /root directory of your new system"
-  print_warning "\nA copy of the dotfiles will be placed in /root directory of your new system"
+  print_warning "\nA copy of the AUI will be placed in /home/$USERNAME directory of your new system"
+  print_warning "A copy of the dotfiles will be placed in /home/$USERNAME of your new system\n"
   git clone https://github.com/$USERNAME/dotfiles
-  cp -R "$(pwd)" "${MOUNTPOINT}"/root
+  cp -R "$(pwd)" "${MOUNTPOINT}"/home/"${USERNAME}"
   umount_partitions
   poweroff
 }
