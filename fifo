@@ -386,7 +386,7 @@ install_base_system() {
   print_info "Using the pacstrap script we install the base system. The base-devel package group will be installed also."
   rm "${MOUNTPOINT}""${EFI_MOUNTPOINT}"/vmlinuz-linux
   select_linux_version
-  pacstrap "${MOUNTPOINT}" base-devel parted btrfs-progs f2fs-tools net-tools git zsh --noconfirm
+  pacstrap "${MOUNTPOINT}" base-devel parted btrfs-progs f2fs-tools net-tools git zsh networkmanager --noconfirm
   [[ $? -ne 0 ]] && error_msg "Installing base system to ${MOUNTPOINT} failed. Check error messages above."
   local PTABLE=$(parted -sl | grep "gpt")
   [[ -n $PTABLE ]] && pacstrap "${MOUNTPOINT}" gptfdisk
@@ -395,9 +395,9 @@ install_base_system() {
     pacstrap "${MOUNTPOINT}" iw wireless_tools wpa_supplicant dialog
   else
     WIRED_DEV=$(ip link | grep "ens\|eno\|enp" | awk '{print $2}' | sed 's/://' | sed '1!d')
-    #if [[ -n $WIRED_DEV ]]; then
-      #arch_chroot "systemctl enable dhcpcd@${WIRED_DEV}.service"
-    #fi
+    if [[ -n $WIRED_DEV ]]; then
+      arch_chroot "systemctl enable NetworkManager"
+    fi
   fi
   if is_package_installed "espeakup"; then
     pacstrap "${MOUNTPOINT}" alsa-utils espeakup brltty
